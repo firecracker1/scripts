@@ -111,22 +111,23 @@ for x in file_lines:
 
 
 print("\nRefund stats:")
-print("{0} Requested refund but not eligible "
+print("* {0} Requested refund but not eligible "
     "for a refund".format(NOT_REFUNDING_COUNT))
-print("{0} Requested refund but did not purchase from "
+print("* {0} Requested refund but did not purchase from "
     "Eventbrite".format(NOT_PURCHASED_FROM_EB_COUNT))
-print("{0} Requested refund, but submitted multiple "
+print("* {0} Requested refund, but submitted multiple "
     "requests".format(WAS_DUPLICATE_COUNT))
-print("{0} Requested refund, but was not in "
+print("* {0} Requested refund, but was not in "
     "spreadsheet 2 (or order type was not "
-    "'Eventbrite Completed')".format(NOT_IN_SPREADSHEET2_COUNT))
-print("{0} people are getting a refund".format(len(TO_BE_REFUNDED)))
-print("${0} refunded".format(
+    "'Eventbrite Completed' or ticket type not in "
+    "{1})".format(NOT_IN_SPREADSHEET2_COUNT, keepers))
+print("* {0} people are getting a refund".format(len(TO_BE_REFUNDED)))
+print("* ${0} refunded".format(
     round(sum(float(x[1]) for x in TO_BE_REFUNDED), 2)))
 print("\nOther stats:")
-print("{0} people submitted multiple requests for "
+print("* {0} people submitted multiple requests for "
     "a refund".format(len(dup_users)))
-print("{0} people typed in their email address "
+print("* {0} people typed in their email address "
     "incorrectly".format(len(incorrect_emails)))
 
 
@@ -134,8 +135,8 @@ print("{0} people typed in their email address "
 canc_options = [x[7] for x in file_lines]
 option_list = set(canc_options)
 for option in sorted(option_list):
-    print("Cancellation option '{0}': {1}".format(
-        option, canc_options.count(option)))
+    print("* {0} users chose cancellation option '{1}'".format(
+        canc_options.count(option), option))
 
 print("\n")
 
