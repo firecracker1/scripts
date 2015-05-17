@@ -148,9 +148,11 @@ file_lines.insert(0, headers)
 file_lines = ["\t".join(x) for x in file_lines]
 
 with open("result.tsv", "w") as fh:
+    print("Creating {0}".format(fh.name))
     fh.write("\n".join(file_lines))
 
 TO_BE_REFUNDED = ["\t".join(x) for x in TO_BE_REFUNDED]
 
 with open("to-be-refunded.tsv", "w") as fh:
+    print("Creating {0}".format(fh.name))
     fh.write("\n".join(TO_BE_REFUNDED))
