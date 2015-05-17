@@ -100,6 +100,10 @@ for x in file_lines:
             z = email_dict2[email]
             value = (z[0], str(round(float(z[8]) * 0.5, 2)))
             TO_BE_REFUNDED.append(value)
+            if x[8].strip():
+                x[8] = " // ".join([value[1], x[8]])
+            else:
+                x[8] = value[1]
         else:
             NOT_REFUNDING_COUNT += 1
             if not was_purchased_from_eb:
