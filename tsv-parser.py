@@ -85,67 +85,71 @@ for be, ce in zip(buyer_emails, confirm_emails):
     if ce != be:
         get_counts(ce)
 
-TO_BE_REFUNDED = []
 NOT_REFUNDING_COUNT = 0
 R_NOT_PURCHASED_FROM_EB_COUNT = 0
 R_WAS_DUPLICATE_COUNT = 0
 R_NOT_IN_SPREADSHEET2_COUNT = 0
 
 NOT_TICKETING_COUNT = 0
-TICKETS_TO_SOWI = []
 
 T_NOT_PURCHASED_FROM_EB_COUNT = 0
 T_WAS_DUPLICATE_COUNT = 0
 T_NOT_IN_SPREADSHEET2_COUNT = 0
 
+class UserOption:
+    refund = 0
+    tickets = 1
+
+ORDER_NUMS = {}
 
 for x in file_lines:
     emails = set(a.strip().lower() for a in x[4:6])
     was_purchased_from_eb = "eventbrite" in x[6].lower()
-    was_not_dup = not not [y for y in emails if y not in dup_users]
+    #was_not_dup = not not [y for y in emails if y not in dup_users]
     was_in_spreadsheet2 = not not [y for y in emails if y in email_dict2]
-    all_reqs = [was_purchased_from_eb, was_not_dup, was_in_spreadsheet2]
+    all_reqs = [was_purchased_from_eb, was_in_spreadsheet2]
     user_option = x[7].strip().lower()
     if all(all_reqs):
         email = [y for y in emails if y in email_dict2][0]
         z = email_dict2[email]
+        order_num = z[0].strip()
         if user_option == "50% refund":
-            value = (z[0], str(round(float(z[8]) * 0.5, 2)))
-            TO_BE_REFUNDED.append(value)
+            value = (UserOption.refund, str(round(float(z[8]) * 0.5, 2)))
             dollar_val = "${0} auto sent 2".format(value[1])
             if x[8].strip():
                 x[8] = " // ".join([dollar_val, x[8]])
             else:
                 x[8] = dollar_val
         elif user_option == 'tickets to something wicked 2015':
-            value = (z[0], int(z[5]))
-            TICKETS_TO_SOWI.append(value)
+            value = (UserOption.tickets, int(z[5]))
+        ORDER_NUMS[order_num] = value
     else:
         if user_option == "50% refund":
             NOT_REFUNDING_COUNT += 1
             if not was_purchased_from_eb:
                 R_NOT_PURCHASED_FROM_EB_COUNT += 1
-            if not was_not_dup:
-                R_WAS_DUPLICATE_COUNT += 1
             if not was_in_spreadsheet2:
                 R_NOT_IN_SPREADSHEET2_COUNT += 1
         elif user_option == 'tickets to something wicked 2015':
             NOT_TICKETING_COUNT += 1
             if not was_purchased_from_eb:
                 T_NOT_PURCHASED_FROM_EB_COUNT += 1
-            if not was_not_dup:
-                T_WAS_DUPLICATE_COUNT += 1
             if not was_in_spreadsheet2:
                 T_NOT_IN_SPREADSHEET2_COUNT += 1
 
+TO_BE_REFUNDED = [(x, y[1]) for x, y in ORDER_NUMS.items()
+    if y[0] == UserOption.refund]
+
+TICKETS_TO_SOWI = [(x, y[1]) for x, y in ORDER_NUMS.items()
+    if y[0] == UserOption.tickets]
 
 print("\nRefund stats:")
 print("* {0} Requested refund but not eligible "
     "for a refund".format(NOT_REFUNDING_COUNT))
 print("* {0} Requested refund but did not purchase from "
     "Eventbrite".format(R_NOT_PURCHASED_FROM_EB_COUNT))
-print("* {0} Requested refund, but submitted multiple "
-    "requests".format(R_WAS_DUPLICATE_COUNT))
+#print("* {0} Requested refund, but submitted multiple "
+#    "requests".format(R_WAS_DUPLICATE_COUNT))
 print("* {0} Requested refund, but was not in "
     "spreadsheet 2 (or order type was not "
     "'Eventbrite Completed' or ticket type not in "
@@ -154,15 +158,15 @@ print("* {0} people are getting a refund".format(len(TO_BE_REFUNDED)))
 print("* ${0} refunded".format(
     round(sum(float(x[1]) for x in TO_BE_REFUNDED), 2)))
 print("\nOther stats:")
-print("* {0} people submitted multiple requests for "
-    "a refund".format(len(dup_users)))
+#print("* {0} people submitted multiple requests for "
+#    "a refund".format(len(dup_users)))
 print("* {0} people typed in their email address "
     "incorrectly".format(len(incorrect_emails)))
 print("*" * 79)
 print("* {0} Requested tickets but did not purchase from "
     "Eventbrite".format(T_NOT_PURCHASED_FROM_EB_COUNT))
-print("* {0} Requested tickets, but submitted multiple "
-    "requests".format(T_WAS_DUPLICATE_COUNT))
+#print("* {0} Requested tickets, but submitted multiple "
+#    "requests".format(T_WAS_DUPLICATE_COUNT))
 print("* {0} Requested tickets, but was not in "
     "spreadsheet 2 (or order type was not "
     "'Eventbrite Completed' or ticket type not in "
