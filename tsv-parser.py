@@ -13,7 +13,6 @@ Output:
 Order Number, Total Paid * 0.5      (<-and add to new columns in spreadsheet 1)
 """
 
-
 import sys
 
 file_name = sys.argv[1]
@@ -89,7 +88,7 @@ WAS_DUPLICATE_COUNT = 0
 NOT_IN_SPREADSHEET2_COUNT = 0
 
 for x in file_lines:
-    emails = set(x[4:6])
+    emails = set(a.strip().lower() for a in x[4:6])
     if x[7].strip().lower() == "50% refund":
         was_purchased_from_eb = "eventbrite" in x[6].lower()
         was_not_dup = not not [y for y in emails if y not in dup_users]
