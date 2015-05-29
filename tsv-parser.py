@@ -138,7 +138,8 @@ for x in file_lines:
                 T_NOT_PURCHASED_FROM_EB_COUNT += 1
             if not was_in_spreadsheet2:
                 T_NOT_IN_SPREADSHEET2_COUNT += 1
-        REJECTS.append("\t".join(x))
+        if not [a for a in x[8:10] if a.strip()]:
+            REJECTS.append("\t".join(x))
 
 TO_BE_REFUNDED = [(x, y[1]) for x, y in ORDER_NUMS.items()
     if y[0] == UserOption.refund]
